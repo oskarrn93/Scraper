@@ -1,0 +1,29 @@
+{
+  "name": "scraper",
+  "version": "1.0.0",
+  "description": "Web scraper",
+  "main": "scraper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "nodejs scraper.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oskarrn93/Scraper.git"
+  },
+  "author": "Oskar Rosén",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oskarrn93/Scraper/issues"
+  },
+  "homepage": "https://github.com/oskarrn93/Scraper#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
+  },
+  "build": "npm build",
+  "clean": "rm -rf node_modules", 
+  "reinstall": "npm run clean && npm install", 
+  "rebuild": "npm run clean && npm install && npm run build"
+}
