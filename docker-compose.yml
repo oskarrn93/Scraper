@@ -1,0 +1,19 @@
+version: '3'
+services:
+  api:
+    image: ubuntu
+    volumes:
+      - ./node_modules/:/opt/scraper/node_modules/
+      - ./src/server.js:/opt/scraper/server.js
+    #command: ["cd", "/opt/scraper/", "nodejs", "tvmatchen.js"]
+
+  database:
+    image: mongo
+    environment:
+      # provide your credentials here
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=oskar123
+    ports:
+      - "27017:27017"
+    command: mongod
+  
