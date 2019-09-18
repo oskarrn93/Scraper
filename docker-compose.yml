@@ -14,12 +14,24 @@ services:
       - "8001:8001"
     command: bash -c "cd /opt/scraper && npm install && npm run prod:server"
 
+  #database:
+  #  image: mongo
+  #  environment:
+  #    - MONGO_INITDB_ROOT_USERNAME=root
+  #    - MONGO_INITDB_ROOT_PASSWORD=oskar123
+  #  #volumes:
+  #    #- ./conf/mongod.conf/:/etc/mongod.conf
+  #  ports:
+  #    - "27017:27017"
+  #  #command: bash -c "mongod --config /etc/mongod.conf"
+  #  command: bash -c "mongod"
+  #  #command: bash -c "tail -f /dev/null"
+
   database:
-    image: mongo:latest
+    image: mariadb:latest
+    restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=oskar123
+      MYSQL_ROOT_PASSWORD: oskar123
     ports:
-      - "27017:27017"
-    command: mongod
+      - "3306:3306"
   
