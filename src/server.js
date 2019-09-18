@@ -4,14 +4,17 @@ const mongo_url = "mongodb://localhost:27017/";
 const express = require('express');
 const cors = require('cors');
 const app = express();
-
 //const fs = require('fs');
 const ical = require('ical-generator');
 
+const PORT = process.env.PORT || 8001;
+
 const domain = "oskarrosen.com";
-const url = "https://oskarrosen.com:8001";
+const url = `https://oskarrosen.com:${PORT}`;
 
 app.use(cors());
+
+console.log( process.env.PORT)
 
 app.get('/cs', function (req, res) {
     getUpcoming("cs", function (result) {
@@ -147,8 +150,8 @@ app.get('/calendar/cs', function (req, res) {
 
 
 
-app.listen(8001, function () {
-    console.log('CORS-enabled web server listening on port 8001')
+app.listen(PORT, function () {
+    console.log(`CORS-enabled web server listening on port ${PORT}`)
 })
 
 
