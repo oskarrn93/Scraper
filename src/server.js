@@ -14,33 +14,40 @@ const url = `https://oskarrosen.com:${PORT}`;
 
 app.use(cors());
 
-console.log( process.env.PORT)
+app.get('/status', function (req, res) {
+    console.log("/status");
+    res.send({status: "ok"});
+})
 
 app.get('/cs', function (req, res) {
-    getUpcoming("cs", function (result) {
-        console.log("cs");
+    console.log("/cs");
 
+    getUpcoming("cs", function (result) {
         //console.log(result);
         res.send(result);
-    });
+    });   
 })
 
 app.get('/football', function (req, res) {
-    getUpcoming("football", function (result) {
-        console.log("football");
+    console.log("/football");
 
+    getUpcoming("football", function (result) {
         // console.log(result);
         res.send(result);
     });
 })
 
 app.get('/nba', function (req, res) {
+    console.log("/nba");
+
     getNBAGames(function (result) {
         res.send(result);
     });
 })
 
 app.get('/calendar/football', function (req, res) {
+    console.log("/calendar/football");
+
     var cal_football = ical({
         domain: domain,
         name: 'Fotball Matches',
@@ -78,6 +85,8 @@ app.get('/calendar/football', function (req, res) {
 })
 
 app.get('/calendar/nba', function (req, res) {
+    console.log("/calendar/nba");
+
     var calendar = ical({
         domain: domain,
         name: 'NBA Games',
@@ -113,6 +122,8 @@ app.get('/calendar/nba', function (req, res) {
 })
 
 app.get('/calendar/cs', function (req, res) {
+    console.log("/calendar/cs");
+
     var cal_cs = ical({
         domain: domain,
         name: 'CS Matches',
@@ -147,26 +158,22 @@ app.get('/calendar/cs', function (req, res) {
     });
 })
 
-
-
-
 app.listen(PORT, function () {
     console.log(`CORS-enabled web server listening on port ${PORT}`)
 })
 
-
-
 function getUpcoming(SPORT, callback) {
-    MongoClient.connect(mongo_url, function (err, client) {
-        var db = client.db('upcoming');
+    MongoClient.connect(mongo_url, function (error, client) {
 
-        if (err) {
-            throw err;
+        if (error) {
+            throw error;
         }
 
-        db.collection(SPORT).find({}).toArray(function (err, result) {
-            if (err) {
-                throw err;
+        const db = client.db('upcoming');
+
+        db.collection(SPORT).find({}).toArray(function (error, result) {
+            if (error) {
+                throw error;
             }
 
             callback(result);
@@ -178,22 +185,23 @@ function getUpcoming(SPORT, callback) {
 
 
 function getNBAGames(callback) {
-    MongoClient.connect(mongo_url, function (err, client) {
-        const db = client.db('upcoming');
+    MongoClient.connect(mongo_url, function (error, client) {
 
-        if (err) {
-            throw err;
+        if (error) {
+            console.error(error)
+            throw error;
         }
 
-        db.collection("nba_tmp").find({}).toArray(function (err, result) {
-            if (err) {
-                throw err;
+        const db = client.db('upcoming');
+
+        db.collection("nba_tmp").find({}).toArray(function (error, result) {
+            if (error) {
+                console.error(error)
+                throw error;
             }
 
             callback(result);
             //client.close();
-        });
-
-        
+        }); 
     });
 }
