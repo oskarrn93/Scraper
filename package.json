@@ -5,7 +5,10 @@
   "main": "scraper.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "nodejs scraper.js"
+    "dev:server": "nodemon src/server.js localhost 8001",
+    "prod:server": "nodejs src/server.js",
+    "dev": "nodemon src/scraper.js",
+    "prod": "nodejs src/scraper.js"
   },
   "repository": {
     "type": "git",
@@ -19,9 +22,15 @@
   "homepage": "https://github.com/oskarrn93/Scraper#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "ical-generator": "^1.8.1",
     "mongodb": "^3.3.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
   },
   "build": "npm build",
   "clean": "rm -rf node_modules",
