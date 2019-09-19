@@ -6,62 +6,55 @@ const mongo_database_name = "upcoming";
 
 const DEBUG = false;
 
-
-async function doNBA(){
+async function doNBA() {
   const data = await getDataFromNBA();
-  saveDataToDatabase(data, "nba")
+  saveDataToDatabase(data, "nba");
 }
 
 async function getDataFromNBA() {
   try {
     const data = await nba.scrape();
     if (DEBUG) console.log(data);
-    return data; 
+    return data;
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return [];
   }
 }
 
-async function doTvmatchen(){
+async function doTvmatchen() {
   const data = await getDataFromTvmatchen();
-  saveDataToDatabase(data, "football")
+  saveDataToDatabase(data, "football");
 }
 async function getDataFromTvmatchen() {
-
   try {
     const data = await tvmatchen.scrape();
     if (DEBUG) console.log(data);
-    return data; 
+    return data;
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return [];
   }
 }
 
-
-
 async function saveDataToDatabase(data, collection_name) {
-  
   try {
     await removeAllFromCollection(collection_name);
-  }
-  catch (error) {
-    console.error(error)
+  } catch (error) {
+    console.error(error);
     return;
   }
 
   try {
     await insertToCollection(collection_name, data);
-  }
-  catch (error) {
-    console.error(error)
+  } catch (error) {
+    console.error(error);
     return;
   }
 }
 
 function removeAllFromCollection(collection_name) {
-  if (DEBUG) console.log("removeAllFromCollection")
+  if (DEBUG) console.log("removeAllFromCollection");
 
   return new Promise((resolve, reject) => {
     MongoClient.connect(mongo_url, function(error, client) {
@@ -70,16 +63,16 @@ function removeAllFromCollection(collection_name) {
       const db = client.db(mongo_database_name);
       db.collection(collection_name).deleteMany();
 
-      if (DEBUG) console.log("done deleting")
+      if (DEBUG) console.log("done deleting");
 
       client.close();
       return resolve();
-    })
+    });
   });
 }
 
 function insertToCollection(collection_name, data) {
-  if (DEBUG) console.log("insertToCollection")
+  if (DEBUG) console.log("insertToCollection");
 
   return new Promise((resolve, reject) => {
     MongoClient.connect(mongo_url, function(error, client) {
@@ -89,8 +82,8 @@ function insertToCollection(collection_name, data) {
       db.collection(collection_name).insertMany(data, function(error, result) {
         if (error) return reject(error);
 
-        if (DEBUG) console.log(result)
-        if (DEBUG) console.log("done inserting")
+        if (DEBUG) console.log(result);
+        if (DEBUG) console.log("done inserting");
 
         client.close();
         return resolve();
@@ -99,12 +92,9 @@ function insertToCollection(collection_name, data) {
   });
 }
 
-
-
 function main() {
   doTvmatchen();
   doNBA();
 }
 
 main();
-

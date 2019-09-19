@@ -41,11 +41,11 @@ function parseNba(data) {
   console.log(data);
 
   const list_of_nba_games = [];
-  const date_now = Date.now() + 86400 //Math.floor(Date.now() / 1000) + 86400; //in seconds, 86400 is equal to one day, so I set time now to be tomorrow to allow games that are earlier today to show
+  const date_now = Date.now() + 86400; //Math.floor(Date.now() / 1000) + 86400; //in seconds, 86400 is equal to one day, so I set time now to be tomorrow to allow games that are earlier today to show
 
   data.lscd.forEach(function(months) {
     months.mscd.g.forEach(function(game) {
-      const nba_game = { 
+      const nba_game = {
         timestamp: null,
         away_team: null,
         home_team: null,
@@ -61,7 +61,10 @@ function parseNba(data) {
       nba_game.timestamp = Date.parse(tmp_date);
 
       //if the teams that are playing are not one of the teams we search for
-      if (nba_teams.indexOf(game.v.tn) == -1 && nba_teams.indexOf(game.h.tn) == -1) {
+      if (
+        nba_teams.indexOf(game.v.tn) == -1 &&
+        nba_teams.indexOf(game.h.tn) == -1
+      ) {
         return;
       }
 
@@ -88,7 +91,7 @@ function parseNba(data) {
     });
   });
 
-  if (DEBUG) console.log(list_of_nba_games)
+  if (DEBUG) console.log(list_of_nba_games);
 
   return list_of_nba_games;
 }
