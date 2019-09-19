@@ -1,42 +1,48 @@
-const requestPromise = require('request-promise');
+const axios = require('axios');
 const cheerio = require('cheerio');
 const crypto = require('crypto');
 
-const options = {
-  uri: "https://www.tvmatchen.nu/",
-  transform: function (body) {
-    return cheerio.load(body);
-  }
-};
-
+const tvmatchen_url = "https://www.tvmatchen.nu/";
 const football_teams = ["Real Madrid", "Malmö FF", "Manchester United"];
 
-const DEBUG = false;
+const DEBUG = true;
 
 
 this.scrape = async function () {
-  return requestPromise(options)
-    .then((response) => {
-      if (DEBUG) console.log(response);
-      return response;
-    })
-    .then((response) => {
-      return parseTvmatchen(response);
-    })
-    .then((data) => {
-      if (DEBUG) console.log(data)
-      return data;
-    })
-    .catch((err) => {
-      console.error(err);
-      return [];
-    });
+  const promise = axios.get(tvmatchen_url)
+  .then((response) => {
+    if (DEBUG) console.log(response);
+    return response;
+  })
+  .then((response) => {
+    if (DEBUG) console.log(response.data);
+    return response.data;
+  })
+  .then((response) => {
+    return parseTvmatchen(response);
+  })
+  .then((data) => {
+    if (DEBUG) console.log(data)
+    return data;
+  })
+  .catch((error) => {
+    throw (error);
+  });  
+
+  try {
+    const data = await promise;
+    return Promise.resolve(data);
+  } catch(error) {
+    return Promise.reject(error);
+  }
 }
 
 
 
 
-function parseTvmatchen($) {
+function parseTvmatchen(data) {
+  const $ = cheerio.load(data); 
+
   const matches = $("ul#matches li.match.fotboll"); //$("ul#matches li.match");
 
   const football_details = matches.map(function() {
@@ -83,4 +89,3 @@ function parseTvmatchen($) {
 
   return football_details;
 }
-

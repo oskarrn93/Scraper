@@ -11,10 +11,15 @@ async function doTvmatchen(){
   saveDataToDatabase(data, "football")
 }
 async function getDataFromTvmatchen() {
-  const data = await tvmatchen.scrape();
-  if (DEBUG) console.log(data);
 
-  return data; 
+  try {
+    const data = await tvmatchen.scrape();
+    if (DEBUG) console.log(data);
+    return data; 
+  } catch (error) {
+    console.error(error)
+    return [];
+  }
 }
 
 
