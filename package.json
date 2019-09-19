@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:api": "nodemon src/api.js localhost 8001",
     "prod:api": "nodejs api.js",
-    "dev:scraper": "nodejs src/scraper.js",
+    "dev:scraper": "nodemon src/scraper.js",
     "prod:scraper": "nodejs scraper.js",
     "dev": "nodemon src/scraper.js localhost 8001",
     "prod": "nodejs src/scraper.js"

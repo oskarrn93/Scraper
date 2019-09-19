@@ -49,4 +49,5 @@ services:
     #ports:
       #- "8001:8001"
     #command: bash -c "cd /opt/scraper && npm install && npm run prod:scraper"
-    command: bash -c "tail -f /dev/null"
+    command: bash -c "cd /opt/scraper && npm install && npm run dev:scraper"
+    #command: bash -c "tail -f /dev/null"
