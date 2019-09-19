@@ -5,8 +5,8 @@
   "main": "scraper.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev:server": "nodemon src/server.js localhost 8001",
-    "prod:server": "nodejs server.js",
+    "dev:api": "nodemon src/api.js localhost 8001",
+    "prod:api": "nodejs api.js",
     "dev:scraper": "nodejs src/scraper.js",
     "prod:scraper": "nodejs scraper.js",
     "dev": "nodemon src/scraper.js localhost 8001",
