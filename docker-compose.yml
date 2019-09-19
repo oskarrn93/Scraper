@@ -2,7 +2,8 @@ version: '3'
 services:
   api:
     image: node:latest
-    #build: .
+    build: .
+    network_mode: "host"
     environment:
       - PORT=8001
     volumes:
@@ -14,24 +15,18 @@ services:
       - "8001:8001"
     command: bash -c "cd /opt/scraper && npm install && npm run prod:server"
 
-  #database:
-  #  image: mongo
-  #  environment:
-  #    - MONGO_INITDB_ROOT_USERNAME=root
-  #    - MONGO_INITDB_ROOT_PASSWORD=oskar123
-  #  #volumes:
-  #    #- ./conf/mongod.conf/:/etc/mongod.conf
-  #  ports:
-  #    - "27017:27017"
-  #  #command: bash -c "mongod --config /etc/mongod.conf"
-  #  command: bash -c "mongod"
-  #  #command: bash -c "tail -f /dev/null"
-
   database:
-    image: mariadb:latest
+    image: mongo
+    network_mode: "host"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: oskar123
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=oskar123
+    volumes:
+      - ./conf/mongod.conf/:/etc/mongod.conf
+      - ./database:/data/db
     ports:
-      - "3306:3306"
-  
+      - "27017:27017"
+    #command: bash -c "mongod --config /etc/mongod.conf"
+    command: bash -c "mongod"
+    #command: bash -c "tail -f /dev/null"
