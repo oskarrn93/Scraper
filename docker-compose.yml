@@ -2,6 +2,7 @@ version: '3'
 services:
   database:
     image: mongo
+    container_name: database
     network_mode: "host"
     restart: always
     environment:
@@ -18,6 +19,7 @@ services:
 
   api:
     image: node:latest
+    container_name: api
     build: .
     network_mode: "host"
     environment:
@@ -33,6 +35,7 @@ services:
 
   scraper:
     image: node:latest
+    container_name: scraper
     build: .
     network_mode: "host"
     #environment:
