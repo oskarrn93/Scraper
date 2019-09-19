@@ -57,21 +57,28 @@ app.get('/calendar/football', function (req, res) {
         timezone: 'Europe/Berlin'
     });
     var time_now = Math.round(Date.now() / 1000);
-    getUpcoming("football", function (result) {
-        //var fotball_events = result.filter(event => event.date > time_now);
-        var fotball_events = result;
-
-        var event = null,
-            start = null;
+    getUpcoming("football", function (fotball_events) {
         for (var a = 0; a < fotball_events.length; a++) {
-            event = fotball_events[a];
-            start = new Date(Math.round(event.date * 1000));
+            const event = fotball_events[a];
 
+            if(isNaN(event.date)) continue;
+
+            console.log(event.date)
+            console.log(new Date(event.date))
+            console.log(new Date(Math.round(event.date * 1000)))
+
+            const start = new Date(event.date);
+            const end = new Date(start.getTime() + 7200000);
+
+
+            console.log(event)
+            console.log(start)
+            console.log(end)
             cal_football.createEvent({
                 start: start,
-                end: new Date(start.getTime() + 7200000), //2 hours
-                summary: event.team1 + " - " + event.team2,
-                description: event.channels.join(", "),
+                end: end, //2 hours
+                summary: event.title,
+                description: event.channels,
 
                 uid: "football-games-" + event._id
             });
@@ -194,7 +201,7 @@ function getNBAGames(callback) {
 
         const db = client.db('upcoming');
 
-        db.collection("nba_tmp").find({}).toArray(function (error, result) {
+        db.collection("nba").find({}).toArray(function (error, result) {
             if (error) {
                 console.error(error)
                 throw error;
