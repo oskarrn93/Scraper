@@ -45,6 +45,7 @@ services:
       - ./package.json:/opt/scraper/package.json
       - ./package-lock.json:/opt/scraper/package-lock.json
       - ./src/tvmatchen.js:/opt/scraper/tvmatchen.js
+      - ./src/nba.js:/opt/scraper/nba.js
       - ./src/scraper.js:/opt/scraper/scraper.js
     #ports:
       #- "8001:8001"

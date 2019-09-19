@@ -1,10 +1,27 @@
 const tvmatchen = require("./tvmatchen.js");
+const nba = require("./nba.js");
 const MongoClient = require("mongodb").MongoClient;
 const mongo_url = "mongodb://localhost:27017/";
 const mongo_database_name = "upcoming";
 
 const DEBUG = false;
 
+
+async function doNBA(){
+  const data = await getDataFromNBA();
+  saveDataToDatabase(data, "nba")
+}
+
+async function getDataFromNBA() {
+  try {
+    const data = await nba.scrape();
+    if (DEBUG) console.log(data);
+    return data; 
+  } catch (error) {
+    console.error(error)
+    return [];
+  }
+}
 
 async function doTvmatchen(){
   const data = await getDataFromTvmatchen();
@@ -86,6 +103,7 @@ function insertToCollection(collection_name, data) {
 
 function main() {
   doTvmatchen();
+  doNBA();
 }
 
 main();
