@@ -32,3 +32,13 @@ ssh -N -L 8001:localhost:8001 oskar@server
 ```sh
 ssh -N -L 27017:localhost:27017 oskar@server
 ```
+
+### Run on server
+
+```sh
+nodejs /root/scraper/src/scraper.js 2>&1 > logger >> /var/log/scraper/scraper
+```
+
+```sh
+nodejs /root/scraper/src/api.js 2>&1 > logger >> /var/log/scraper/api 
+```
