@@ -36,9 +36,9 @@ ssh -N -L 27017:localhost:27017 oskar@server
 ### Run on server
 
 ```sh
-nodejs /root/scraper/src/scraper.js 2>&1 > logger >> /var/log/scraper/scraper
+nodejs /root/scraper/src/scraper.js 2>&1 > logger >> /var/log/scraper/scraper.log
 ```
 
 ```sh
-nodejs /root/scraper/src/api.js 2>&1 > logger >> /var/log/scraper/api 
+nodejs /root/scraper/src/api.js 2>&1 > logger >> /var/log/scraper/api.log
 ```
