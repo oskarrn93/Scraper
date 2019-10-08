@@ -49,14 +49,14 @@ function parseHLTV(data) {
 
   const games = _games.map(function() {
     const details = {
-      timestamp: null,
+      date: null,
       team1: null,
       team2: null,
       id: null
     };
 
-    const timestamp = cheerio(this).find("td.time > div.time").data("unix");
-    if(DEBUG) console.log(timestamp);
+    const date = cheerio(this).find("td.time > div.time").data("unix");
+    if(DEBUG) console.log(date);
 
     const _teams = cheerio(this).find("td.team-cell div.team");
     const team1 = _teams.first().text().trim();
@@ -67,7 +67,7 @@ function parseHLTV(data) {
       console.log(team2);
     }
 
-    details.timestamp = timestamp;
+    details.date = date;
     details.team1 = team1;
     details.team2 = team2;
 

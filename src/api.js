@@ -144,7 +144,7 @@ app.get("/calendar/cs", function(req, res) {
 
     for (var a = 0; a < cs_events.length; a++) {
       let event = cs_events[a];
-      let start = new Date(Math.round(event.date));
+      let start = new Date(event.date);
 
       cal_cs.createEvent({
         start: start,
