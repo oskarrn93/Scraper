@@ -5,15 +5,15 @@
   "main": "scraper.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev:api": "nodemon src/api.js localhost 8001",
-    "prod:api": "nodejs api.js",
-    "dev:scraper": "nodemon src/scraper.js",
-    "prod:scraper": "nodejs scraper.js",
+    "dev:api": "nodemon src/api.js",
+    "prod:api": "nodejs api.js 2>&1 > logger >> /var/log/scraper/api.log &",
+    "prod:scraper:cs": "nodejs scraper.js cs",
+    "prod:scraper:football": "nodejs scraper.js football",
+    "prod:scraper:nba": "nodejs scraper.js nba",
+    "prod:scraper:all": "nodejs scraper.js all",
     "dev:tvmatchen": "nodemon src/tvmatchen.js",
     "prod:tvmatchen": "nodejs tvmatchen.js",
-    "dev:nba": "nodemon src/nba.js",
     "prod:nba": "nodejs nba.js",
-    "dev:hltv": "nodemon src/hltv.js",
     "prod:hltv": "nodejs hltv.js"
   },
   "repository": {
