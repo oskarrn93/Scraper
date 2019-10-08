@@ -12,6 +12,10 @@ const PORT = process.env.PORT || 8001;
 const domain = "oskarrosen.com";
 const url = `https://oskarrosen.com:${PORT}`;
 
+const ONE_HOUR_IN_MS = 3600000;
+const TWO_HOURS_IN_MS = 7200000;
+const THREE_HOURS_IN_MS = 10800000;
+
 app.use(cors());
 
 app.get("/status", function(req, res) {
@@ -63,19 +67,15 @@ app.get("/calendar/football", function(req, res) {
 
       if (isNaN(event.date)) continue;
 
-      console.log(event.date);
-      console.log(new Date(event.date));
-      console.log(new Date(Math.round(event.date * 1000)));
-
       const start = new Date(event.date);
-      const end = new Date(start.getTime() + 7200000);
+      const end = new Date(start.getTime() + TWO_HOURS_IN_MS);
 
       console.log(event);
       console.log(start);
       console.log(end);
       cal_football.createEvent({
         start: start,
-        end: end, //2 hours
+        end: end,
         summary: event.title,
         description: event.channels,
 
@@ -113,7 +113,7 @@ app.get("/calendar/nba", function(req, res) {
 
       calendar.createEvent({
         start: start_time,
-        end: new Date(start_time.getTime() + 10800000), //3 hours
+        end: new Date(start_time.getTime() + THREE_HOURS_IN_MS),
         summary: game.away_team + " - " + game.home_team,
         description: game.away_team + " - " + game.home_team,
         location: game.location,
@@ -138,21 +138,17 @@ app.get("/calendar/cs", function(req, res) {
     ttl: 3600,
     timezone: "Europe/Berlin"
   });
-  var time_now = Math.round(Date.now() / 1000);
+
   getUpcoming("cs", function(result) {
-    //var cs_events = result.filter(event => event.date > time_now);
+    const cs_events = result;
 
-    var cs_events = result;
-
-    var event = null,
-      start = null;
     for (var a = 0; a < cs_events.length; a++) {
-      event = cs_events[a];
-      start = new Date(Math.round(event.date * 1000));
+      let event = cs_events[a];
+      let start = new Date(Math.round(event.date));
 
       cal_cs.createEvent({
         start: start,
-        end: new Date(start.getTime() + 3600000), //1 hour
+        end: new Date(start.getTime() + ONE_HOUR_IN_MS),
         summary: event.team1 + " - " + event.team2,
         description: event.url,
         uid: "cs-games-" + event._id
