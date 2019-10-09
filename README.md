@@ -44,3 +44,11 @@ nodejs /home/oskar/github/Scraper/src/scraper.js nba 2>&1 > logger >> /var/log/s
 ```sh
 nodejs /home/oskar/github/Scraper/src/api.js 2>&1 > logger >> /var/log/scraper/api.log &
 ```
+
+### Crontab
+
+```sh
+5 03,12,18 * * * nodejs /home/oskar/github/Scraper/src/scraper.js cs 2>&1 > logger >> /var/log/scraper/scraper.log
+7 03,12,18 * * * nodejs /home/oskar/github/Scraper/src/scraper.js football 2>&1 > logger >> /var/log/scraper/scraper.log
+8 06 * * * nodejs /home/oskar/github/Scraper/src/scraper.js nba 2>&1 > logger >> /var/log/scraper/scraper.log
+```
