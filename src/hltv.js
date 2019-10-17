@@ -7,6 +7,9 @@ const cs_teams = ["fnatic", "faze", "nip"];
 
 //const bad_keywords = ["academy"];
 
+const ONE_HOUR_IN_MS = 3600000;
+const THREE_HOURS_IN_MS = 10800000;
+const FIVE_HOURS_IN_MS = 18000000;
 
 const DEBUG = true;
 
@@ -45,29 +48,46 @@ function parseHLTV(data) {
 
   const _games = $("div.upcoming-matches div.match-day table tbody tr");
 
-  console.log (_games.length)
+  if(DEBUG) console.log(`_games.length: ${_games.length}`);
 
   const games = _games.map(function() {
     const details = {
-      date: null,
+      startDate: null,
       team1: null,
       team2: null,
       id: null
     };
 
-    const date = cheerio(this).find("td.time > div.time").data("unix");
-    if(DEBUG) console.log(date);
+    const startDate = cheerio(this).find("td.time > div.time").data("unix");
+    if(DEBUG) console.log(`startDate: ${startDate}`);
 
     const _teams = cheerio(this).find("td.team-cell div.team");
     const team1 = _teams.first().text().trim();
     const team2 = _teams.last().text().trim();
 
-    if(DEBUG) {
-      console.log(team1);
-      console.log(team2);
+    if(DEBUG) console.log(`team1: ${team1}, team2: ${team2}`);
+    
+    const _map = cheerio(this).find("td.star-cell div.map-text");
+    const map = _map.text().trim();
+
+    if(DEBUG) console.log(`map: ${map}`);
+
+    let endDate = startDate;
+    
+    if(map == "bo5") {
+      endDate += FIVE_HOURS_IN_MS
+    }
+    else if(map == "bo3") {
+      endDate += THREE_HOURS_IN_MS
+    }
+    else {
+      endDate += ONE_HOUR_IN_MS;
     }
 
-    details.date = date;
+    if(DEBUG) console.log(`endDate: ${endDate}`);
+
+    details.startDate = startDate;
+    details.endDate = endDate;
     details.team1 = team1;
     details.team2 = team2;
 

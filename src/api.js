@@ -143,16 +143,23 @@ app.get("/calendar/cs", function(req, res) {
     const cs_events = result;
 
     for (var a = 0; a < cs_events.length; a++) {
-      let event = cs_events[a];
-      let start = new Date(event.date);
+      const event = cs_events[a];
 
-      cal_cs.createEvent({
-        start: start,
-        end: new Date(start.getTime() + ONE_HOUR_IN_MS),
-        summary: event.team1 + " - " + event.team2,
-        description: event.url,
-        uid: "cs-games-" + event._id
-      });
+      const startDate = new Date(event.startDate);
+      const endDate = new Date(event.endDate);
+
+      try {
+        cal_cs.createEvent({
+          start: startDate,
+          end: endDate,
+          summary: event.team1 + " - " + event.team2,
+          description: event.url,
+          uid: "cs-games-" + event._id
+        });
+      } catch (error) {
+        console.error(error);
+      }
+     
     }
     res.setHeader("Content-type", "application/octet-stream");
     res.setHeader("Content-disposition", "attachment; filename=cs.ics");
