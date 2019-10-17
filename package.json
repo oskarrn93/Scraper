@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:api": "nodemon src/api.js",
-    "prod:api": "nodejs api.js 2>&1 > logger >> /var/log/scraper/api.log &",
+    "prod:api": "nodejs api.js",
     "prod:scraper:cs": "nodejs scraper.js cs",
     "prod:scraper:football": "nodejs scraper.js football",
     "prod:scraper:nba": "nodejs scraper.js nba",
