@@ -36,9 +36,19 @@ ssh -N -L 27017:localhost:27017 oskar@server
 ### Run on server
 
 ```sh
-nodejs /root/scraper/src/scraper.js 2>&1 > logger >> /var/log/scraper/scraper.log
+nodejs /home/oskar/github/Scraper/src/scraper.js cs 2>&1 > logger >> /var/log/scraper/scraper.log
+nodejs /home/oskar/github/Scraper/src/scraper.js football 2>&1 > logger >> /var/log/scraper/scraper.log
+nodejs /home/oskar/github/Scraper/src/scraper.js nba 2>&1 > logger >> /var/log/scraper/scraper.log
 ```
 
 ```sh
-nodejs /root/scraper/src/api.js 2>&1 > logger >> /var/log/scraper/api.log
+nodejs /home/oskar/github/Scraper/src/api.js 2>&1 > logger >> /var/log/scraper/api.log &
+```
+
+### Crontab
+
+```sh
+5 03,12,18 * * * nodejs /home/oskar/github/Scraper/src/scraper.js cs 2>&1 > logger >> /var/log/scraper/scraper.log
+7 03,12,18 * * * nodejs /home/oskar/github/Scraper/src/scraper.js football 2>&1 > logger >> /var/log/scraper/scraper.log
+8 06 * * * nodejs /home/oskar/github/Scraper/src/scraper.js nba 2>&1 > logger >> /var/log/scraper/scraper.log
 ```
