@@ -24,29 +24,35 @@ services:
     network_mode: "host"
     environment:
       - PORT=8001
+      - NODE_ENV=production
     volumes:
-      #- ./node_modules/:/opt/scraper/node_modules/
-      - ./package.json:/opt/scraper/package.json
-      - ./package-lock.json:/opt/scraper/package-lock.json
-      - ./src/api.js:/opt/scraper/api.js
+      - ./package.json:/package.json
+      - ./package-lock.json:/package-lock.json
+      - ./log/.:/log/.
+      - ./src/api.js:/api.js
     ports:
       - "8001:8001"
-    command: bash -c "cd /opt/scraper && npm install && npm run prod:api"
+    command: bash -c "npm install && npm run docker:api"
 
   scraper:
     image: node:12
     container_name: scraper
     build: .
     network_mode: "host"
-    #environment:
+    environment:
+      - NODE_ENV=production
       #- PORT=8080
     volumes:
-      - ./node_modules/:/opt/scraper/node_modules/
-      - ./package.json:/opt/scraper/package.json
-      - ./package-lock.json:/opt/scraper/package-lock.json
-      - ./src/.:/opt/scraper/.
+      - ./node_modules/:/node_modules/
+      - ./package.json:/package.json
+      - ./package-lock.json:/package-lock.json
+      - ./log/.:/log/.
+      - ./src/hltv.js:/hltv.js
+      - ./src/nba.js:/nba.js
+      - ./src/tvmatchen.js:/tvmatchen.js
+      - ./src/scraper.js:/scraper.js
     #ports:
       #- "8001:8001"
     #command: bash -c "cd /opt/scraper && npm install && npm run prod:scraper"
-    command: bash -c "cd /opt/scraper && npm install && npm run prod:scraper:all"
+    command: bash -c "npm install && npm run docker:scraper:all"
     #command: bash -c "tail -f /dev/null"
