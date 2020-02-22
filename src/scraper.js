@@ -1,10 +1,22 @@
 import mongodb from "mongodb";
+import dotenv from "dotenv";
+import Sentry from "@sentry/node";
+
 import { scrapeTvMatchen } from "./tvmatchen.js";
 import { scrapeNBA } from "./nba.js";
 import { scrapeHLTV } from "./hltv.js";
 
-const mongodbName = "upcoming";
-const mongodbURL = `mongodb://localhost:27017/${mongodbName}`;
+dotenv.config(); //read .env file (if it exists)
+dotenv.config({ path: "config.env" });
+
+const ENVIRONMENT = process.env.NODE_ENV || "development";
+
+if (process.env.SENTRY_DSN) {
+  Sentry.init({ dsn: process.env.SENTRY_DSN, environment: ENVIRONMENT });
+} else {
+  console.log("No Sentry DSN configured");
+}
+const mongodbURL = `${process.env.MONGODB_URL}${process.env.MONGODB_DBNAME}`;
 
 let DEBUG = false;
 
