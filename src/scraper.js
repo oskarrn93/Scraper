@@ -121,7 +121,7 @@ function main() {
 
       const promises = [];
 
-      args.forEach(function(arg) {
+      for (const arg of args) {
         if (arg == "football") {
           const promise = doTvmatchen(dbHandler);
           promises.push(promise);
@@ -139,7 +139,7 @@ function main() {
         } else {
           console.error(`argument ${arg} is not supported`);
         }
-      });
+      }
 
       Promise.all(promises).then(() => {
         mongoclient.close();
