@@ -1,5 +1,5 @@
-const axios = require("axios");
-const crypto = require("crypto");
+import axios from "axios";
+import crypto from "crypto";
 
 const nba_url =
   "http://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2019/league/00_full_schedule.json";
@@ -7,7 +7,7 @@ const nba_teams = ["Celtics", "Lakers", "Warriors"];
 
 const DEBUG = true;
 
-this.scrape = async function() {
+export const scrapeNBA = async function() {
   const promise = axios
     .get(nba_url)
     .then(response => {

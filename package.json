@@ -2,6 +2,7 @@
   "name": "scraper",
   "version": "1.0.0",
   "description": "Web scraper",
+  "type": "module",
   "main": "scraper.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",

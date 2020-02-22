@@ -1,13 +1,13 @@
-const axios = require("axios");
-const cheerio = require("cheerio");
-const crypto = require("crypto");
+import axios from "axios";
+import cheerio from "cheerio";
+import crypto from "crypto";
 
 const tvmatchen_url = "https://www.tvmatchen.nu/";
 const football_teams = ["Real Madrid", "Malmö FF", "Manchester United"];
 
 const DEBUG = true;
 
-this.scrape = async function() {
+export const scrapeTvMatchen = async function() {
   const promise = axios
     .get(tvmatchen_url)
     .then(response => {

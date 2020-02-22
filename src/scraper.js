@@ -1,7 +1,8 @@
-const tvmatchen = require("./tvmatchen.js");
-const nba = require("./nba.js");
-const hltv = require("./hltv.js");
-const mongodb = require("mongodb");
+import mongodb from "mongodb";
+import { scrapeTvMatchen } from "./tvmatchen.js";
+import { scrapeNBA } from "./nba.js";
+import { scrapeHLTV } from "./hltv.js";
+
 const mongodbName = "upcoming";
 const mongodbURL = `mongodb://localhost:27017/${mongodbName}`;
 
@@ -20,7 +21,7 @@ async function doNBA(dbHandler) {
 
 async function getDataFromNBA() {
   try {
-    const data = await nba.scrape();
+    const data = await scrapeNBA();
     if (DEBUG) console.log(data);
     return data;
   } catch (error) {
@@ -36,7 +37,7 @@ async function doTvmatchen(dbHandler) {
 
 async function getDataFromTvmatchen() {
   try {
-    const data = await tvmatchen.scrape();
+    const data = await scrapeTvMatchen();
     if (DEBUG) console.log(data);
     return data;
   } catch (error) {
@@ -52,7 +53,7 @@ async function doHLTV(dbHandler) {
 
 async function getDataFromHLTV() {
   try {
-    const data = await hltv.scrape();
+    const data = await scrapeHLTV();
     if (DEBUG) console.log(data);
     return data;
   } catch (error) {
