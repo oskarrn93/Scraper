@@ -1,15 +1,21 @@
 const tvmatchen = require("./tvmatchen.js");
 const nba = require("./nba.js");
 const hltv = require("./hltv.js");
-const MongoClient = require("mongodb").MongoClient;
-const mongo_url = "mongodb://localhost:27017/";
-const mongo_database_name = "upcoming";
+const mongodb = require("mongodb");
+const mongodbName = "upcoming";
+const mongodbURL = `mongodb://localhost:27017/${mongodbName}`;
 
 let DEBUG = false;
 
-async function doNBA() {
+const mongoclient = new mongodb.MongoClient(mongodbURL, {
+  native_parser: true,
+  useUnifiedTopology: true,
+  useNewUrlParser: true
+});
+
+async function doNBA(dbHandler) {
   const data = await getDataFromNBA();
-  saveDataToDatabase(data, "nba");
+  saveDataToDatabase(dbHandler, data, "nba");
 }
 
 async function getDataFromNBA() {
@@ -23,9 +29,9 @@ async function getDataFromNBA() {
   }
 }
 
-async function doTvmatchen() {
+async function doTvmatchen(dbHandler) {
   const data = await getDataFromTvmatchen();
-  saveDataToDatabase(data, "football");
+  saveDataToDatabase(dbHandler, data, "football");
 }
 
 async function getDataFromTvmatchen() {
@@ -39,9 +45,9 @@ async function getDataFromTvmatchen() {
   }
 }
 
-async function doHLTV() {
+async function doHLTV(dbHandler) {
   const data = await getDataFromHLTV();
-  saveDataToDatabase(data, "cs");
+  saveDataToDatabase(dbHandler, data, "cs");
 }
 
 async function getDataFromHLTV() {
@@ -55,90 +61,82 @@ async function getDataFromHLTV() {
   }
 }
 
-async function saveDataToDatabase(data, collection_name) {
+async function saveDataToDatabase(dbHandler, data, collection_name) {
   try {
-    await removeAllFromCollection(collection_name);
+    await removeAllFromCollection(dbHandler, collection_name);
   } catch (error) {
     console.error(error);
     return;
   }
 
   try {
-    await insertToCollection(collection_name, data);
+    await insertToCollection(dbHandler, collection_name, data);
   } catch (error) {
     console.error(error);
     return;
   }
 }
 
-function removeAllFromCollection(collection_name) {
+function removeAllFromCollection(dbHandler, collection_name) {
   if (DEBUG) console.log("removeAllFromCollection");
 
   return new Promise((resolve, reject) => {
-    MongoClient.connect(mongo_url, function(error, client) {
-      if (error) return reject(error);
-
-      const db = client.db(mongo_database_name);
-      db.collection(collection_name).deleteMany();
-
-      if (DEBUG) console.log("done deleting");
-
-      client.close();
-      return resolve();
-    });
+    dbHandler.collection(collection_name).deleteMany();
+    return resolve();
   });
 }
 
-function insertToCollection(collection_name, data) {
+function insertToCollection(dbHandler, collection_name, data) {
   if (DEBUG) console.log("insertToCollection");
 
   return new Promise((resolve, reject) => {
-    MongoClient.connect(mongo_url, function(error, client) {
-      if (error) return reject(error);
-
-      const db = client.db(mongo_database_name);
-      db.collection(collection_name).insertMany(data, function(error, result) {
+    dbHandler
+      .collection(collection_name)
+      .insertMany(data, function(error, result) {
         if (error) return reject(error);
 
         if (DEBUG) console.log(result);
         if (DEBUG) console.log("done inserting");
 
-        client.close();
         return resolve();
       });
-    });
   });
 }
 
-function scrapeAll() {
-  doTvmatchen();
-  doNBA();
-  doHLTV();
+function scrapeAll(dbHandler) {
+  doTvmatchen(dbHandler);
+  doNBA(dbHandler);
+  doHLTV(dbHandler);
 }
 
 function main() {
   const args = process.argv.slice(2);
- 
-  args.forEach(function (arg) {
-    if(arg == "football") {
-      doTvmatchen();
-    }
-    else if(arg == "nba") {
-      doNBA();
-    }
-    else if(arg == "cs") {
-      doHLTV();
-    }
-    else if(arg == "all") {
-      scrapeAll();
-    }
-    else if(arg == "debug") {
-      DEBUG = true;
-    }
-    else {
-      console.error(`argument ${arg} is not supported`);
-    }
-  });
+
+  try {
+    mongoclient.connect(async err => {
+      if (err) throw err;
+
+      const dbHandler = mongoclient.db("upcoming");
+
+      args.forEach(function(arg) {
+        if (arg == "football") {
+          doTvmatchen(dbHandler);
+        } else if (arg == "nba") {
+          doNBA(dbHandler);
+        } else if (arg == "cs") {
+          doHLTV(dbHandler);
+        } else if (arg == "all") {
+          scrapeAll(dbHandler);
+        } else if (arg == "debug") {
+          DEBUG = true;
+        } else {
+          console.error(`argument ${arg} is not supported`);
+        }
+      });
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 main();
