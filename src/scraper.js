@@ -61,37 +61,37 @@ async function getDataFromHLTV() {
   }
 }
 
-async function saveDataToDatabase(dbHandler, data, collection_name) {
+async function saveDataToDatabase(dbHandler, data, collectionName) {
   try {
-    await removeAllFromCollection(dbHandler, collection_name);
+    await removeAllFromCollection(dbHandler, collectionName);
   } catch (error) {
     console.error(error);
     return;
   }
 
   try {
-    await insertToCollection(dbHandler, collection_name, data);
+    await insertToCollection(dbHandler, collectionName, data);
   } catch (error) {
     console.error(error);
     return;
   }
 }
 
-function removeAllFromCollection(dbHandler, collection_name) {
+function removeAllFromCollection(dbHandler, collectionName) {
   if (DEBUG) console.log("removeAllFromCollection");
 
   return new Promise((resolve, reject) => {
-    dbHandler.collection(collection_name).deleteMany();
+    dbHandler.collection(collectionName).deleteMany();
     return resolve();
   });
 }
 
-function insertToCollection(dbHandler, collection_name, data) {
+function insertToCollection(dbHandler, collectionName, data) {
   if (DEBUG) console.log("insertToCollection");
 
   return new Promise((resolve, reject) => {
     dbHandler
-      .collection(collection_name)
+      .collection(collectionName)
       .insertMany(data, function(error, result) {
         if (error) return reject(error);
 
