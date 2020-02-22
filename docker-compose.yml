@@ -1,39 +1,6 @@
-version: '3'
+version: "3"
+
 services:
-  database:
-    image: mongo:4.2-bionic
-    container_name: database
-    network_mode: "host"
-    restart: always
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=oskar123
-    volumes:
-      - ./conf/mongod.conf/:/etc/mongod.conf
-      - ./database:/data/db
-    ports:
-      - "27017:27017"
-    #command: bash -c "mongod --config /etc/mongod.conf"
-    command: bash -c "mongod"
-    #command: bash -c "tail -f /dev/null"
-
-  api:
-    image: node:12
-    container_name: api
-    build: .
-    network_mode: "host"
-    environment:
-      - PORT=8001
-      - NODE_ENV=production
-    volumes:
-      - ./package.json:/package.json
-      - ./package-lock.json:/package-lock.json
-      - ./log/.:/log/.
-      - ./src/api.js:/api.js
-    ports:
-      - "8001:8001"
-    command: bash -c "npm install && npm run docker:api"
-
   scraper:
     image: node:12
     container_name: scraper
@@ -41,18 +8,10 @@ services:
     network_mode: "host"
     environment:
       - NODE_ENV=production
-      #- PORT=8080
     volumes:
-      - ./node_modules/:/node_modules/
-      - ./package.json:/package.json
-      - ./package-lock.json:/package-lock.json
-      - ./log/.:/log/.
-      - ./src/hltv.js:/hltv.js
-      - ./src/nba.js:/nba.js
-      - ./src/tvmatchen.js:/tvmatchen.js
-      - ./src/scraper.js:/scraper.js
-    #ports:
-      #- "8001:8001"
-    #command: bash -c "cd /opt/scraper && npm install && npm run prod:scraper"
-    command: bash -c "npm install && npm run docker:scraper:all"
-    #command: bash -c "tail -f /dev/null"
+      - ./node_modules/:/code/node_modules/
+      - ./package.json:/code/package.json
+      - ./package-lock.json:/code/package-lock.json
+      - ./src/:/code/src/
+
+    command: bash -c "cd /code && npm install && npm run dev:all"
