@@ -16,7 +16,7 @@ const mongoclient = new mongodb.MongoClient(mongodbURL, {
 
 async function doNBA(dbHandler) {
   const data = await getDataFromNBA();
-  saveDataToDatabase(dbHandler, data, "nba");
+  await saveDataToDatabase(dbHandler, data, "nba");
 }
 
 async function getDataFromNBA() {
@@ -32,7 +32,7 @@ async function getDataFromNBA() {
 
 async function doTvmatchen(dbHandler) {
   const data = await getDataFromTvmatchen();
-  saveDataToDatabase(dbHandler, data, "football");
+  await saveDataToDatabase(dbHandler, data, "football");
 }
 
 async function getDataFromTvmatchen() {
@@ -48,7 +48,7 @@ async function getDataFromTvmatchen() {
 
 async function doHLTV(dbHandler) {
   const data = await getDataFromHLTV();
-  saveDataToDatabase(dbHandler, data, "cs");
+  await saveDataToDatabase(dbHandler, data, "cs");
 }
 
 async function getDataFromHLTV() {
@@ -104,10 +104,10 @@ function insertToCollection(dbHandler, collectionName, data) {
   });
 }
 
-function scrapeAll(dbHandler) {
-  doTvmatchen(dbHandler);
-  doNBA(dbHandler);
-  doHLTV(dbHandler);
+async function scrapeAll(dbHandler) {
+  await doTvmatchen(dbHandler);
+  await doNBA(dbHandler);
+  await doHLTV(dbHandler);
 }
 
 function main() {
@@ -119,24 +119,36 @@ function main() {
 
       const dbHandler = mongoclient.db("upcoming");
 
+      const promises = [];
+
       args.forEach(function(arg) {
         if (arg == "football") {
-          doTvmatchen(dbHandler);
+          const promise = doTvmatchen(dbHandler);
+          promises.push(promise);
         } else if (arg == "nba") {
-          doNBA(dbHandler);
+          const promise = doNBA(dbHandler);
+          promises.push(promise);
         } else if (arg == "cs") {
-          doHLTV(dbHandler);
+          const promise = doHLTV(dbHandler);
+          promises.push(promise);
         } else if (arg == "all") {
-          scrapeAll(dbHandler);
+          const promise = scrapeAll(dbHandler);
+          promises.push(promise);
         } else if (arg == "debug") {
           DEBUG = true;
         } else {
           console.error(`argument ${arg} is not supported`);
         }
       });
+
+      Promise.all(promises).then(() => {
+        mongoclient.close();
+        process.exit(0);
+      });
     });
   } catch (error) {
     console.error(error);
+    process.exit(1);
   }
 }
 
