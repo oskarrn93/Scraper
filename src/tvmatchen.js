@@ -7,25 +7,25 @@ const football_teams = ["Real Madrid", "Malmö FF", "Manchester United"];
 
 const DEBUG = true;
 
-export const scrapeTvMatchen = async function() {
+export const scrapeTvMatchen = async function () {
   const promise = axios
     .get(tvmatchen_url)
-    .then(response => {
+    .then((response) => {
       if (DEBUG) console.log(response);
       return response;
     })
-    .then(response => {
+    .then((response) => {
       if (DEBUG) console.log(response.data);
       return response.data;
     })
-    .then(response => {
+    .then((response) => {
       return parseTvmatchen(response);
     })
-    .then(data => {
+    .then((data) => {
       if (DEBUG) console.log(data);
       return data;
     })
-    .catch(error => {
+    .catch((error) => {
       throw error;
     });
 
@@ -40,26 +40,29 @@ export const scrapeTvMatchen = async function() {
 function parseTvmatchen(data) {
   const $ = cheerio.load(data);
 
-  const matches = $("ul#matches li.match.fotboll"); //$("ul#matches li.match");
+  const matches = $(".match-list > div");
+
+  if (DEBUG) console.log(`matches length: ${matches.length}`);
 
   const football_details = matches
-    .map(function() {
+    .map(function () {
       const details = {
         title: null,
         date: null,
         channels: null,
-        id: null
+        id: null,
       };
 
       details.title = cheerio(this)
-        .find("div.details > h3")
+        .find(".match-detail h3")
+        .first()
         .text()
         .trim();
 
       let flag_found_team = false;
 
       //check if the teams we are searching for is in the entry, otherwise skip this entry
-      football_teams.forEach(function(value) {
+      football_teams.forEach(function (value) {
         if (details.title.indexOf(value) !== -1) {
           flag_found_team = true;
         }
@@ -68,29 +71,21 @@ function parseTvmatchen(data) {
       if (flag_found_team === false) return;
 
       details.channels = cheerio(this)
-        .find("div.details > div.channels > a.channel")
-        .map(function() {
-          return cheerio(this)
-            .attr("title")
-            .trim();
+        .find(".match-channels li a img")
+        .map(function () {
+          return cheerio(this).attr("alt").trim();
         })
         .get()
         .join(", ");
 
-      const time = cheerio(this)
-        .find("time")
-        .text()
-        .trim();
-      const day = cheerio(this)
-        .parent()
-        .parent()
-        .data("hash");
+      const time = cheerio(this).find(".match-time").first().text().trim();
+      const day = cheerio(this).parent().parent().data("date");
       details.date = Date.parse(day + " " + time);
 
       const sha256 = crypto.createHash("sha256");
 
       //hash the info we have from all the values we have that are not null
-      Object.values(details).forEach(function(value) {
+      Object.values(details).forEach(function (value) {
         if (value === null) return;
         sha256.update(value.toString());
       });
