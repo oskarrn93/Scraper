@@ -1,17 +1,15 @@
-import axios from "axios";
-import cheerio from "cheerio";
-import crypto from "crypto";
+const axios = require("axios");
+const cheerio = require("cheerio");
+const crypto = require("crypto");
 
-import {
-  ONE_HOUR_IN_MS,
-  THREE_HOURS_IN_MS,
-  FIVE_HOURS_IN_MS,
-} from "../shared.js";
+const ONE_HOUR_IN_MS = 3600000;
+const THREE_HOURS_IN_MS = 10800000;
+const FIVE_HOURS_IN_MS = 18000000;
 
 const url = "https://www.hltv.org/matches";
 const teams = ["fnatic", "faze", "nip"];
 
-export const scrapeHLTV = async (DEBUG = false) => {
+const scrapeHLTV = async (DEBUG = false) => {
   const response = await axios.get(url);
 
   const { data } = response;
@@ -115,3 +113,5 @@ const parseHLTV = (data, DEBUG) => {
 
   return games;
 };
+
+module.exports = scrapeHLTV;

@@ -2,18 +2,10 @@
   "name": "scraper",
   "version": "1.0.0",
   "description": "Web scraper",
-  "type": "module",
   "main": "scraper.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "dev:cs": "node src/scraper.js cs",
-    "dev:nba": "node src/scraper.js nba",
-    "dev:football": "node src/scraper.js football",
-    "dev:all": "node src/scraper.js all",
-    "prod:cs": "node src/scraper.js cs 2>&1 >> /var/log/scraper/scraper.log",
-    "prod:nba": "node src/scraper.js nba 2>&1 >> /var/log/scraper/scraper.log",
-    "prod:football": "node src/scraper.js football 2>&1 >> /var/log/scraper/scraper.log",
-    "prod:all": "node src/scraper.js all 2>&1 >> /var/log/scraper/scraper.log"
+    "build": "zip -r ../calendar.zip ."
   },
   "repository": {
     "type": "git",
@@ -26,19 +18,12 @@
   },
   "homepage": "https://github.com/oskarrn93/Scraper#readme",
   "dependencies": {
-    "@sentry/node": "^5.23.0",
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.2",
-    "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
-    "express": "^4.17.1",
-    "ical-generator": "^1.15.0",
-    "mongodb": "^3.6.2"
+    "ical-generator": "^1.15.0"
   },
-  "devDependencies": {
-    "nodemon": "^1.19.4"
-  },
+  "devDependencies": {},
   "build": "npm build",
   "clean": "rm -rf node_modules",
   "reinstall": "npm run clean && npm install",

@@ -1,7 +1,6 @@
-import iCalGenerator from "ical-generator";
-import http from "http";
+const iCalGenerator = require("ical-generator");
 
-import { scrapeHLTV } from "../scrapers/hltv.js";
+const scrapeHLTV = require("./scraper.js");
 
 const createCalendarEvents = (games) => {
   return games.map(({ startDate, endDate, team1, team2, id }) => ({
@@ -14,8 +13,9 @@ const createCalendarEvents = (games) => {
   }));
 };
 
-const main = async () => {
+const generateCalendar = async () => {
   const games = await scrapeHLTV();
+
   const events = createCalendarEvents(games);
 
   const iCal = iCalGenerator({
@@ -28,13 +28,7 @@ const main = async () => {
     events,
   });
 
-  http
-    .createServer(function (req, res) {
-      iCal.serve(res);
-    })
-    .listen(3000, function () {
-      console.log("Server running at http://localhost:3000/");
-    });
+  return iCal.toString();
 };
 
-main();
+module.exports = generateCalendar;
