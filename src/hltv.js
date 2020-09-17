@@ -13,25 +13,25 @@ const FIVE_HOURS_IN_MS = 18000000;
 
 const DEBUG = true;
 
-export const scrapeHLTV = async function() {
+export const scrapeHLTV = async function () {
   const promise = axios
     .get(hltv_url)
-    .then(response => {
+    .then((response) => {
       if (DEBUG) console.log(response);
       return response;
     })
-    .then(response => {
+    .then((response) => {
       if (DEBUG) console.log(response.data);
       return response.data;
     })
-    .then(response => {
+    .then((response) => {
       return parseHLTV(response);
     })
-    .then(data => {
+    .then((data) => {
       if (DEBUG) console.log(data);
       return data;
     })
-    .catch(error => {
+    .catch((error) => {
       throw error;
     });
 
@@ -46,46 +46,44 @@ export const scrapeHLTV = async function() {
 function parseHLTV(data) {
   const $ = cheerio.load(data);
 
-  const _games = $("div.upcoming-matches div.match-day table tbody tr");
+  const _games = $("div.upcomingMatch");
 
   if (DEBUG) console.log(`_games.length: ${_games.length}`);
 
   const games = _games
-    .map(function() {
+    .map(function () {
       const details = {
         startDate: null,
         team1: null,
         team2: null,
-        id: null
+        id: null,
       };
 
-      const startDate = cheerio(this)
-        .find("td.time > div.time")
-        .data("unix");
+      const startDate = cheerio(this).find(".matchTime").data("unix");
       if (DEBUG) console.log(`startDate: ${startDate}`);
 
-      const _teams = cheerio(this).find("td.team-cell div.team");
-      const team1 = _teams
+      const team1 = cheerio(this)
+        .find(".matchTeam.team1 .matchTeamName")
         .first()
         .text()
         .trim();
-      const team2 = _teams
-        .last()
+      const team2 = cheerio(this)
+        .find(".matchTeam.team2 .matchTeamName")
+        .first()
         .text()
         .trim();
 
       if (DEBUG) console.log(`team1: ${team1}, team2: ${team2}`);
 
-      const _map = cheerio(this).find("td.star-cell div.map-text");
-      const map = _map.text().trim();
+      const nrOfMaps = cheerio(this).find(".matchMeta").first().text().trim();
 
-      if (DEBUG) console.log(`map: ${map}`);
+      if (DEBUG) console.log(`nrOfMaps: ${nrOfMaps}`);
 
       let endDate = startDate;
 
-      if (map == "bo5") {
+      if (nrOfMaps == "bo5") {
         endDate += FIVE_HOURS_IN_MS;
-      } else if (map == "bo3") {
+      } else if (nrOfMaps == "bo3") {
         endDate += THREE_HOURS_IN_MS;
       } else {
         endDate += ONE_HOUR_IN_MS;
@@ -101,7 +99,7 @@ function parseHLTV(data) {
       return details;
     })
     .get()
-    .filter(function(game) {
+    .filter(function (game) {
       if (game.team1 && cs_teams.includes(game.team1.toLowerCase())) {
         return true;
       }
@@ -113,10 +111,10 @@ function parseHLTV(data) {
       if (DEBUG) console.log("None of the teams matches what we search for");
       return false;
     })
-    .map(function(game) {
+    .map(function (game) {
       const sha256 = crypto.createHash("sha256");
 
-      Object.values(game).forEach(function(value) {
+      Object.values(game).forEach(function (value) {
         if (value === null) return;
         sha256.update(value.toString());
       });
