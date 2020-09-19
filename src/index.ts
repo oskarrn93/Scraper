@@ -22,7 +22,3 @@ if (argv.football) {
     console.log('result', result)
   })()
 }
-
-if (argv.all) {
-  console.log('scrape all')
-}
