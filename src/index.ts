@@ -22,3 +22,9 @@ if (argv.football) {
     console.log('result', result)
   })()
 }
+
+if (!argv.cs && !argv.nba && !argv.football) {
+  console.log(`Please provide a valid argument!
+
+--cs, --nba, --football`)
+}
