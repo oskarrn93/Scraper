@@ -1,8 +1,6 @@
 import axios from 'axios'
 import cheerio from 'cheerio'
-import parse from 'date-fns/parse'
 import addHours from 'date-fns/addHours'
-import { parseFromTimeZone } from 'date-fns-timezone'
 import { Event } from '../interfaces'
 
 const url = 'https://www.hltv.org/matches'
