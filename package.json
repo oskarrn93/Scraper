@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 0",
     "scraper": "ts-node ./src/index.ts",
     "scraper:hltv": "ts-node ./src/index.ts --target hltv",
-    "build": "npx tsc",
+    "build": "rm -rf ./build && npx tsc",
     "zip": "zip -r ../calendar.zip ."
   },
   "repository": {
