@@ -1,15 +1,15 @@
-const generateCalendar = require("./calendar.js");
+const generateCalendar = require('../calendar/tvmatchen.js')
 
 exports.handler = async (event) => {
-  const data = await generateCalendar();
+  const data = await generateCalendar()
 
   return {
     statusCode: 200,
     headers: {
-      "Content-Type": "application/octet-stream",
-      "Content-Disposition": `attachment; filename="football.ics"`,
+      'Content-Type': 'application/octet-stream',
+      'Content-Disposition': `attachment; filename="football.ics"`,
     },
-    body: Buffer.from(data).toString("base64"),
+    body: Buffer.from(data).toString('base64'),
     isBase64Encoded: true,
-  };
-};
+  }
+}
