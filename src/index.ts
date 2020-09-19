@@ -1,5 +1,6 @@
 import { argv } from 'yargs'
 
+import { generateNBACalendar } from './calendar/nba'
 import { generateTvMatchenCalendar } from './calendar/tvmatchen'
 
 if (argv.cs) {
@@ -7,7 +8,10 @@ if (argv.cs) {
 }
 
 if (argv.nba) {
-  console.log('scrape nba')
+  ;(async () => {
+    const result = await generateNBACalendar()
+    console.log('result', result)
+  })()
 }
 
 if (argv.football) {
