@@ -1,8 +1,8 @@
 import iCalGenerator from 'ical-generator'
 
 import { scrapeCS } from '../scrapers/cs'
-import { scrapeNBA } from './../scrapers/nba'
-import { scrapeTvMatchen } from './../scrapers/tvmatchen'
+import { scrapeNBA } from '../scrapers/nba'
+import { scrapeTvMatchen } from '../scrapers/tvmatchen'
 
 import { createCalendarEvents } from '../utils'
 

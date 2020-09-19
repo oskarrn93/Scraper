@@ -1,6 +1,6 @@
 import { argv } from 'yargs'
 
-import { generateCalendar } from './calendar/calendar'
+import { generateCalendar } from './calendar'
 
 if (argv.cs) {
   ;(async () => {
