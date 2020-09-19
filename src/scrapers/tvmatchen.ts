@@ -4,7 +4,7 @@ import crypto from 'crypto'
 import parse from 'date-fns/parse'
 import addHours from 'date-fns/addHours'
 import { parseFromTimeZone } from 'date-fns-timezone'
-import { Event } from '../interface/Event'
+import { Event } from '../interfaces'
 
 const url = 'https://www.tvmatchen.nu/'
 const teams = [
@@ -32,9 +32,9 @@ const parseTvmatchen = (data: string, DEBUG: boolean) => {
 
   const result: Event[] = games
     .map((index, game) => {
-      const title = $(game).find('.match-detail h3').first().text().trim()
+      const summary = $(game).find('.match-detail h3').first().text().trim()
 
-      if (!teams.some((team) => title.toLowerCase().includes(team.toLowerCase()))) {
+      if (!teams.some((team) => summary.toLowerCase().includes(team.toLowerCase()))) {
         return null
       }
 
@@ -59,7 +59,7 @@ const parseTvmatchen = (data: string, DEBUG: boolean) => {
       const end = addHours(start, 2)
 
       const event: Event = {
-        title,
+        summary,
         description,
         start,
         end,
