@@ -1,17 +1,21 @@
-import { argv } from "yargs";
+import { argv } from 'yargs'
+import { scrapeTvMatchen } from './scrapers/tvmatchen'
 
 if (argv.cs) {
-  console.log("scrape cs");
+  console.log('scrape cs')
 }
 
 if (argv.nba) {
-  console.log("scrape nba");
+  console.log('scrape nba')
 }
 
 if (argv.football) {
-  console.log("scrape football");
+  ;(async () => {
+    const result = await scrapeTvMatchen()
+    console.log('result', result)
+  })()
 }
 
 if (argv.all) {
-  console.log("scrape football");
+  console.log('scrape all')
 }
