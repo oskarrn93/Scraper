@@ -1,7 +1,7 @@
-const generateCalendar = require('../calendar/tvmatchen.js')
+const generateCalendar = require('../calendar/calendar.js')
 
 exports.handler = async (event) => {
-  const data = await generateCalendar()
+  const data = await generateCalendar('Football')
 
   return {
     statusCode: 200,

@@ -1,26 +1,24 @@
 import { argv } from 'yargs'
 
-import { generateCSCalendar } from './calendar/cs'
-import { generateNBACalendar } from './calendar/nba'
-import { generateTvMatchenCalendar } from './calendar/tvmatchen'
+import { generateCalendar } from './calendar/calendar'
 
 if (argv.cs) {
   ;(async () => {
-    const result = await generateCSCalendar()
+    const result = await generateCalendar('CS')
     console.log('result', result)
   })()
 }
 
 if (argv.nba) {
   ;(async () => {
-    const result = await generateNBACalendar()
+    const result = await generateCalendar('NBA')
     console.log('result', result)
   })()
 }
 
 if (argv.football) {
   ;(async () => {
-    const result = await generateTvMatchenCalendar()
+    const result = await generateCalendar('Football')
     console.log('result', result)
   })()
 }
