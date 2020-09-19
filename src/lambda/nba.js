@@ -1,4 +1,4 @@
-const generateCalendar = require('../calendar/index.js')
+const { generateCalendar } = require('../calendar/index.js')
 
 exports.handler = async (event) => {
   const data = await generateCalendar('NBA')
