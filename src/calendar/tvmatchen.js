@@ -1,6 +1,6 @@
 const iCalGenerator = require("ical-generator");
 
-const scrapeTvMatchen = require("./scraper.js");
+const scrapeTvMatchen = require("../scrapers/tvmatchen.js");
 
 const createCalendarEvents = (games) => {
   return games.map(({ startDate, endDate, title, channels, id }) => ({
