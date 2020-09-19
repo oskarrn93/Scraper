@@ -5,6 +5,7 @@
   "main": "scraper.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
+    "scraper": "ts-node ./src/index.ts",
     "scraper:hltv": "ts-node ./src/index.ts --target hltv",
     "build": "npx tsc",
     "zip": "zip -r ../calendar.zip ."
@@ -28,6 +29,7 @@
     "yargs": "^16.0.3"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.21",
     "@types/node": "^14.11.1",
     "@types/yargs": "^15.0.5",
     "eslint": "^6.8.0",
