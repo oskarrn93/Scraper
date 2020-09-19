@@ -1,43 +1,28 @@
-import axios from "axios";
-import cheerio from "cheerio";
-import crypto from "crypto";
+const axios = require("axios");
+const cheerio = require("cheerio");
+const crypto = require("crypto");
+const parse = require("date-fns/parse");
+const addHours = require("date-fns/addHours");
+const { parseFromTimeZone } = require("date-fns-timezone");
 
-const tvmatchen_url = "https://www.tvmatchen.nu/";
-const football_teams = ["Real Madrid", "Malmö FF", "Manchester United"];
+const url = "https://www.tvmatchen.nu/";
+const teams = [
+  "Real Madrid",
+  "Malmö FF",
+  "Manchester United",
+  "Paris Saint Germain",
+  "FC Bayern München",
+];
 
-const DEBUG = true;
+const scrapeTvMatchen = async (DEBUG = false) => {
+  const response = await axios.get(url);
+  const { data } = response;
 
-export const scrapeTvMatchen = async function () {
-  const promise = axios
-    .get(tvmatchen_url)
-    .then((response) => {
-      if (DEBUG) console.log(response);
-      return response;
-    })
-    .then((response) => {
-      if (DEBUG) console.log(response.data);
-      return response.data;
-    })
-    .then((response) => {
-      return parseTvmatchen(response);
-    })
-    .then((data) => {
-      if (DEBUG) console.log(data);
-      return data;
-    })
-    .catch((error) => {
-      throw error;
-    });
-
-  try {
-    const data = await promise;
-    return Promise.resolve(data);
-  } catch (error) {
-    return Promise.reject(error);
-  }
+  const parsedGames = parseTvmatchen(data, DEBUG);
+  return parsedGames;
 };
 
-function parseTvmatchen(data) {
+function parseTvmatchen(data, DEBUG) {
   const $ = cheerio.load(data);
 
   const matches = $(".match-list > div");
@@ -48,7 +33,8 @@ function parseTvmatchen(data) {
     .map(function () {
       const details = {
         title: null,
-        date: null,
+        startDate: null,
+        endDate: null,
         channels: null,
         id: null,
       };
@@ -62,7 +48,7 @@ function parseTvmatchen(data) {
       let flag_found_team = false;
 
       //check if the teams we are searching for is in the entry, otherwise skip this entry
-      football_teams.forEach(function (value) {
+      teams.forEach(function (value) {
         if (details.title.indexOf(value) !== -1) {
           flag_found_team = true;
         }
@@ -79,8 +65,16 @@ function parseTvmatchen(data) {
         .join(", ");
 
       const time = cheerio(this).find(".match-time").first().text().trim();
-      const day = cheerio(this).parent().parent().data("date");
-      details.date = Date.parse(day + " " + time);
+      const date = cheerio(this).parent().parent().data("date");
+
+      details.startDate = parseFromTimeZone(
+        parse(`${date} ${time}`, "yyyy-MM-dd HH:mm", new Date()),
+        {
+          timeZone: "Europe/Berlin",
+        }
+      );
+
+      details.endDate = addHours(details.startDate, 2);
 
       const sha256 = crypto.createHash("sha256");
 
@@ -98,3 +92,5 @@ function parseTvmatchen(data) {
 
   return football_details;
 }
+
+module.exports = scrapeTvMatchen;
