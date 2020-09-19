@@ -1,10 +1,14 @@
 import { argv } from 'yargs'
 
+import { generateCSCalendar } from './calendar/cs'
 import { generateNBACalendar } from './calendar/nba'
 import { generateTvMatchenCalendar } from './calendar/tvmatchen'
 
 if (argv.cs) {
-  console.log('scrape cs')
+  ;(async () => {
+    const result = await generateCSCalendar()
+    console.log('result', result)
+  })()
 }
 
 if (argv.nba) {
