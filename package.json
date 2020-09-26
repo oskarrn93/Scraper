@@ -5,8 +5,10 @@
   "main": "scraper.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "scraper": "ts-node ./src/index.ts",
-    "scraper:hltv": "ts-node ./src/index.ts --target hltv",
+    "scraper": "npx ts-node ./src/index.ts",
+    "scraper:cs": "npx ts-node ./src/index.ts --cs",
+    "scraper:nba": "npx ts-node ./src/index.ts --nba",
+    "scraper:football": "npx ts-node ./src/index.ts --football",
     "build": "./build.sh"
   },
   "repository": {
