@@ -1,5 +1,5 @@
 import axios from 'axios'
-import addDays from 'date-fns/addDays'
+import subDays from 'date-fns/subDays'
 import addHours from 'date-fns/addHours'
 import { parseFromTimeZone } from 'date-fns-timezone'
 import _ from 'lodash'
@@ -19,7 +19,7 @@ export const scrapeNBA = async (DEBUG = false) => {
 }
 
 const parseNBA = ({ lscd }: NBASchedule, DEBUG: boolean): Event[] => {
-  const dateTreshold = addDays(Date.now(), 1)
+  const dateTreshold = subDays(Date.now(), 1)
 
   const events: Event[][] = lscd.map(
     ({ mscd: { g } }) =>
