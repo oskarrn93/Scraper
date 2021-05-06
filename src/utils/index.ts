@@ -1,9 +1,9 @@
 import crypto from 'crypto'
-import iCalGenerator from 'ical-generator'
 
-import { Event } from '../interfaces'
+import type { ICalEventData } from 'ical-generator'
+import type { Event } from '../interfaces'
 
-export const createCalendarEvents = (games: Event[]): iCalGenerator.EventData[] => {
+export const createCalendarEvents = (games: Event[]): ICalEventData[] => {
   return games.map(({ start, end, summary, description }) => {
     const uid = crypto.randomBytes(20).toString('hex')
 

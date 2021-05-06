@@ -29,7 +29,6 @@ export const generateCalendar = async (action: Action) => {
   const events = createCalendarEvents(games)
 
   const iCal = iCalGenerator({
-    domain: 'calendar.oskarrosen.com',
     name: `${action} Games`,
     url: `https://calendar.oskarrosen.com/${action.toLowerCase()}`,
     prodId: `//Oskar Rosen//${action} Games//EN`,
