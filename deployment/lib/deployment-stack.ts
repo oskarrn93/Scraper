@@ -1,7 +1,13 @@
 import * as path from 'path'
 import * as cdk from '@aws-cdk/core'
-import * as apigateway from '@aws-cdk/aws-apigateway'
 import * as lambda from '@aws-cdk/aws-lambda-nodejs'
+import * as apigateway from '@aws-cdk/aws-apigateway'
+import * as route53 from '@aws-cdk/aws-route53'
+import * as route53Targets from '@aws-cdk/aws-route53-targets'
+import * as certificateManager from '@aws-cdk/aws-certificatemanager'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 export class DeploymentStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -16,6 +22,7 @@ export class DeploymentStack extends cdk.Stack {
       handler: 'nba',
       depsLockFilePath: path.join(__dirname, '../../package.json'),
       memorySize: 256,
+      timeout: cdk.Duration.seconds(10),
     })
 
     const handlerCS = new lambda.NodejsFunction(this, 'CalendarCSHandler', {
@@ -23,6 +30,7 @@ export class DeploymentStack extends cdk.Stack {
       handler: 'cs',
       depsLockFilePath: path.join(__dirname, '../../package.json'),
       memorySize: 256,
+      timeout: cdk.Duration.seconds(10),
     })
 
     const handlerFootball = new lambda.NodejsFunction(this, 'CalendarFootballHandler', {
@@ -30,15 +38,24 @@ export class DeploymentStack extends cdk.Stack {
       handler: 'football',
       depsLockFilePath: path.join(__dirname, '../../package.json'),
       memorySize: 256,
+      timeout: cdk.Duration.seconds(10),
     })
 
     /**
      * Define API Gateway API's
      */
 
-    const api = new apigateway.RestApi(this, 'calendar-api', {
+    const api = new apigateway.RestApi(this, 'calendar-api-gateway', {
       restApiName: 'Calendar API Service',
       description: 'This service serves Calendars.',
+      domainName: {
+        domainName: 'calendar.oskarrosen.io',
+        certificate: certificateManager.Certificate.fromCertificateArn(
+          this,
+          'oskarrosen-io-cert',
+          process.env.CM_CERT_ARN!,
+        ),
+      },
     })
 
     // resource /nba
@@ -52,5 +69,19 @@ export class DeploymentStack extends cdk.Stack {
     // resource /football
     const calendarFootballResource = api.root.addResource('football')
     calendarFootballResource.addMethod('GET', new apigateway.LambdaIntegration(handlerFootball))
+
+    /**
+     * Setup Route53
+     */
+
+    const zone = route53.HostedZone.fromLookup(this, 'oskarrosen-io-zone', {
+      domainName: 'oskarrosen.io',
+    })
+
+    const _aliasRecord = new route53.ARecord(this, 'calendar-api-alias-record', {
+      zone,
+      recordName: 'calendar',
+      target: route53.RecordTarget.fromAlias(new route53Targets.ApiGateway(api)),
+    })
   }
 }
