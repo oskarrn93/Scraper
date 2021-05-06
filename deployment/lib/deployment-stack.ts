@@ -2,36 +2,55 @@ import * as path from 'path'
 import * as cdk from '@aws-cdk/core'
 import * as apigateway from '@aws-cdk/aws-apigateway'
 import * as lambda from '@aws-cdk/aws-lambda-nodejs'
-import * as s3 from '@aws-cdk/aws-s3'
 
 export class DeploymentStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
-    const bucket = new s3.Bucket(this, 'CalendarScraper')
+    /**
+     * Define lambda handlers
+     * */
 
     const handlerNBA = new lambda.NodejsFunction(this, 'CalendarNBAHandler', {
-      entry: path.join(__dirname, '../../src/lambda/nba.js'),
-      handler: 'handler',
+      entry: path.join(__dirname, '../../src/lambda/index.ts'),
+      handler: 'nba',
       depsLockFilePath: path.join(__dirname, '../../package.json'),
       memorySize: 256,
-      environment: {
-        BUCKET: bucket.bucketName,
-      },
     })
 
-    bucket.grantReadWrite(handlerNBA)
-
-    const calendarNBAAPI = new apigateway.RestApi(this, 'calendar-nba-api', {
-      restApiName: 'CalendarNBA Service',
-      description: 'This service serves NBA Calendar.',
+    const handlerCS = new lambda.NodejsFunction(this, 'CalendarCSHandler', {
+      entry: path.join(__dirname, '../../src/lambda/index.ts'),
+      handler: 'cs',
+      depsLockFilePath: path.join(__dirname, '../../package.json'),
+      memorySize: 256,
     })
 
-    const getCalendarNBAIntegration = new apigateway.LambdaIntegration(handlerNBA, {
-      requestTemplates: { 'application/json': '{ "statusCode": "200" }' },
+    const handlerFootball = new lambda.NodejsFunction(this, 'CalendarFootballHandler', {
+      entry: path.join(__dirname, '../../src/lambda/index.ts'),
+      handler: 'football',
+      depsLockFilePath: path.join(__dirname, '../../package.json'),
+      memorySize: 256,
     })
 
-    const calendarNBAAPIResource = calendarNBAAPI.root.addResource('calendar-nba')
-    calendarNBAAPIResource.addMethod('GET', getCalendarNBAIntegration)
+    /**
+     * Define API Gateway API's
+     */
+
+    const api = new apigateway.RestApi(this, 'calendar-api', {
+      restApiName: 'Calendar API Service',
+      description: 'This service serves Calendars.',
+    })
+
+    // resource /nba
+    const calendarNBAResource = api.root.addResource('nba')
+    calendarNBAResource.addMethod('GET', new apigateway.LambdaIntegration(handlerNBA))
+
+    // resource /cs
+    const calendarCSResource = api.root.addResource('cs')
+    calendarCSResource.addMethod('GET', new apigateway.LambdaIntegration(handlerCS))
+
+    // resource /football
+    const calendarFootballResource = api.root.addResource('football')
+    calendarFootballResource.addMethod('GET', new apigateway.LambdaIntegration(handlerFootball))
   }
 }
