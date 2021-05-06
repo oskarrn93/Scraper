@@ -11,7 +11,12 @@ const url =
 const teams = ['Celtics', 'Lakers', 'Warriors', 'Nets']
 
 export const scrapeNBA = async (DEBUG = false) => {
-  const response = await axios.get(url)
+  const response = await axios.get(url, {
+    headers: {
+      Accept: 'application/json',
+      'User-Agent': 'calendar-scraper',
+    },
+  })
   const { data } = response
 
   const parsedGames = parseNBA(data, DEBUG)

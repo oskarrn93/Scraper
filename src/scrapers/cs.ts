@@ -7,7 +7,12 @@ const url = 'https://www.hltv.org/matches'
 const teams = ['fnatic', 'FaZe', 'NiP']
 
 export const scrapeCS = async (DEBUG = false) => {
-  const response = await axios.get(url)
+  const response = await axios.get(url, {
+    headers: {
+      Accept: 'text/html',
+      'User-Agent': 'calendar-scraper',
+    },
+  })
   const { data } = response
 
   const parsedGames = parseHLTV(data, DEBUG)
