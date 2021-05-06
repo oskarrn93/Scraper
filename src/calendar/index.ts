@@ -6,7 +6,7 @@ import { scrapeTvMatchen } from '../scrapers/tvmatchen'
 
 import { createCalendarEvents } from '../utils'
 
-type Action = 'CS' | 'NBA' | 'Football'
+export type Action = 'CS' | 'NBA' | 'Football'
 
 const getScraper = (action: Action) => {
   switch (action) {
