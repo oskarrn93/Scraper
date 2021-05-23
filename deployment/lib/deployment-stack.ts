@@ -5,6 +5,7 @@ import * as apigateway from '@aws-cdk/aws-apigateway'
 import * as route53 from '@aws-cdk/aws-route53'
 import * as route53Targets from '@aws-cdk/aws-route53-targets'
 import * as certificateManager from '@aws-cdk/aws-certificatemanager'
+import * as dynamodb from '@aws-cdk/aws-dynamodb'
 import * as dotenv from 'dotenv'
 
 dotenv.config()
@@ -23,6 +24,9 @@ export class DeploymentStack extends cdk.Stack {
       depsLockFilePath: path.join(__dirname, '../../package.json'),
       memorySize: 256,
       timeout: cdk.Duration.seconds(10),
+      environment: {
+        DYNAMODB_TABLE_NAME: process.env.DYNAMODB_TABLE_NAME!,
+      },
     })
 
     const handlerCS = new lambda.NodejsFunction(this, 'CalendarCSHandler', {
@@ -31,6 +35,9 @@ export class DeploymentStack extends cdk.Stack {
       depsLockFilePath: path.join(__dirname, '../../package.json'),
       memorySize: 256,
       timeout: cdk.Duration.seconds(10),
+      environment: {
+        DYNAMODB_TABLE_NAME: process.env.DYNAMODB_TABLE_NAME!,
+      },
     })
 
     const handlerFootball = new lambda.NodejsFunction(this, 'CalendarFootballHandler', {
@@ -39,6 +46,9 @@ export class DeploymentStack extends cdk.Stack {
       depsLockFilePath: path.join(__dirname, '../../package.json'),
       memorySize: 256,
       timeout: cdk.Duration.seconds(10),
+      environment: {
+        DYNAMODB_TABLE_NAME: process.env.DYNAMODB_TABLE_NAME!,
+      },
     })
 
     /**
@@ -83,5 +93,17 @@ export class DeploymentStack extends cdk.Stack {
       recordName: 'calendar',
       target: route53.RecordTarget.fromAlias(new route53Targets.ApiGateway(api)),
     })
+
+    /**
+     * Setup database
+     */
+    const table = new dynamodb.Table(this, 'CalendarScraperTable', {
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+    })
+
+    table.grantReadWriteData(handlerNBA)
+    table.grantReadWriteData(handlerCS)
+    table.grantReadWriteData(handlerFootball)
   }
 }
